@@ -1,0 +1,15 @@
+const select=document.querySelector('select'),page=document.body.dataset.page;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const params=new URLSearchParams(location.search);let language=params.get('lang');
+try{language=language||localStorage.getItem('calcSupportLanguage')}catch{}
+if(!window.copy[language])language=navigator.language.startsWith('ko')?'ko':navigator.language.startsWith('zh')?'zh-Hant':navigator.language.startsWith('ja')?'ja':'en';
+function render(){const c=window.copy[language];select.value=language;document.documentElement.lang=language;document.title='BOTOLIA CALC · '+c.nav[['support','privacy','terms'].indexOf(page)];
+ document.querySelector('nav').innerHTML=['index.html','privacy.html','terms.html'].map((file,i)=>`<a href="${file}?lang=${language}" ${['support','privacy','terms'][i]===page?'aria-current="page"':''}>${esc(c.nav[i])}</a>`).join('');
+ let body='';
+ if(page==='support')body+=`<section class="hero"><div><h1>${esc(c.nav[0])}</h1><p class="lead">${esc(c.lead)}</p></div><div class="instrument" aria-hidden="true"><span class="glass"><i></i><i></i><i></i></span><span>CALCULATE<br>CRAFT<br>KEEP</span></div></section><section class="steps">${c.steps.map((x,i)=>`<details id="step${x[0]}" ><summary><span class="number">${x[0]}</span><span>${esc(x[1])}</span><b class="expand" aria-hidden="true">›</b></summary><div class="detail"><h3>${esc(x[2])}</h3><p>${esc(x[3])}</p></div></details>`).join('')}</section><h2>${esc(c.faq)}</h2><section class="faq">${c.questions.map(x=>`<details><summary>${esc(x[0])}<b class="expand" aria-hidden="true">›</b></summary><div class="detail"><p>${esc(x[1])}</p></div></details>`).join('')}</section><section class="contact"><h2>${esc(c.contact)}</h2><p>${esc(c.contactbody)}</p><a class="button" href="mailto:quietleaf.apps@gmail.com?subject=BOTOLIA%20CALC%20Support">${esc(c.mail)} ↗</a><small>quietleaf.apps@gmail.com</small></section>`;
+ else if(page==='privacy')body+=`<h1>${esc(c.privacyTitle)}</h1><div class="prose"><div class="steps privacy-cards">${c.privacy.map(x=>`<details><summary><span>${esc(x[0])}</span><b class="expand" aria-hidden="true">›</b></summary><div class="detail"><p>${esc(x[1])}</p></div></details>`).join('')}</div><p><a href="index.html?lang=${language}#contact">${esc(c.contact)} ↗</a></p></div>`;
+ else body+=`<h1>${esc(c.termsTitle)}</h1><div class="prose"><p>${esc(c.terms)}</p><a class="button" href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">${esc(c.eula)} ↗</a></div>`;
+ document.querySelector('#content').innerHTML=body;document.querySelector('.contact')?.setAttribute('id','contact');
+ document.querySelectorAll('.flow a').forEach(a=>a.addEventListener('click',()=>{document.querySelector(a.getAttribute('href')).open=true}));
+}
+select.addEventListener('change',()=>{language=select.value;try{localStorage.setItem('calcSupportLanguage',language)}catch{}const url=new URL(location);url.searchParams.set('lang',language);history.replaceState(null,'',url);render()});render();
