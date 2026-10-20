@@ -2,7 +2,7 @@ const select=document.querySelector('select'),page=document.body.dataset.page;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const params=new URLSearchParams(location.search);let language=params.get('lang');
 try{language=language||localStorage.getItem('calcSupportLanguage')}catch{}
-if(!window.copy[language])language=navigator.language.startsWith('ko')?'ko':navigator.language.startsWith('zh')?'zh-Hant':navigator.language.startsWith('ja')?'ja':'en';
+if(!window.copy[language])language=navigator.language.startsWith('ko')?'ko':navigator.language.startsWith('zh-CN')||navigator.language.startsWith('zh-SG')?'zh-Hans':navigator.language.startsWith('zh')?'zh-Hant':navigator.language.startsWith('ja')?'ja':'en';
 function render(){const c=window.copy[language];select.value=language;document.documentElement.lang=language;document.title='BOTOLIA CALC · '+c.nav[['support','privacy','terms'].indexOf(page)];
  document.querySelector('nav').innerHTML=['index.html','privacy.html','terms.html'].map((file,i)=>`<a href="${file}?lang=${language}" ${['support','privacy','terms'][i]===page?'aria-current="page"':''}>${esc(c.nav[i])}</a>`).join('');
  let body='';
